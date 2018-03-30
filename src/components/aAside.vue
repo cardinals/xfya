@@ -1,8 +1,6 @@
 <template>
-	<div id="left">
-		<div class="admin-logo">
-			<img src="/static/img/logo-admin.png" alt="">
-		</div>
+	<div id="left" :class="$store.state.aside?'close':''">
+		<div class="admin-logo"></div>
 		<aside class="aside">
 			<el-menu default-active="1" class="el-menu-vertical-demo"
 			@open="handleOpen"
@@ -65,18 +63,22 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-#left{
-	.admin-logo{
-		width:210px;
-		height:40px;
-		padding-top:10px;
-	}
+.admin-logo{
+	width:210px;
+	height:40px;
+	padding-top:10px;
+	background:url('/static/img/logo-admin.png') no-repeat center center;
+}
+.close .admin-logo{
+	width:60px;
+	background:url('/static/img/logo-small.png') no-repeat center center;
 }
 .aside{
 	text-align: left;
 	position: absolute;
     top: 50px;
     bottom: 0;
+	width:210px;
 	.el-menu{
 		height:100%;
 	}
@@ -85,8 +87,10 @@ export default {
 		line-height:50px;
 	}
 }
-.el-menu-vertical-demo {
-	width: 210px;
-	min-height: 400px;
+.close .aside{
+	-width:60px;
+}
+.el-menu--collapse{
+	width:60px;
 }
 </style>

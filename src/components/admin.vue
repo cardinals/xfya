@@ -1,5 +1,5 @@
 <template>
-	<div id="admin">
+	<div id="admin" :class="$store.state.aside?'close':''">
 		<div class="content">
 			<aAside/>
 			<div class="main">
@@ -33,5 +33,9 @@ export default {
 	left: 210px;
 	right: 0;
 	bottom: 0;
+	transition: all .3s
+}
+.close .main{
+	left:60px;
 }
 </style>
