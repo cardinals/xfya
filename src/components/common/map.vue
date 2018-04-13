@@ -183,37 +183,62 @@
 </template>
 
 <script>
-import BMap from 'BMap'
+import BMap from 'BMap';
 export default {
 	data () {
 		return {
 			page_type: '',
 			selectItem: 0,
-			city_list: [{'id': 0, 'name': '全部'}, {'id': 2, 'name': '朝阳中队'}, {'id': 3, 'name': '海淀中队'}],
-			bd_list: [{'id': 0, 'name': ['全部', '建国门', '亚运村']}, {'id': 1, 'name': ['全部', '亚运村']}, {'id': 3, 'name': ['全部', '建国门']}],
-			bd_list_active: null
-		}
+			city_list: [
+				{
+					'id': 0,
+					'name': '全部',
+				}, {
+					'id': 2,
+					'name': '朝阳中队',
+				},
+				{
+					'id': 3,
+					'name': '海淀中队',
+				}
+			],
+			bd_list: [
+				{
+					'id': 0,
+					'name': ['全部', '建国门', '亚运村'],
+				},
+				{
+					'id': 1,
+					'name': ['全部', '亚运村'],
+				},
+				{
+					'id': 3,
+					'name': ['全部', '建国门'],
+				}
+			],
+			bd_list_active: null,
+		};
 	},
 	mounted () {
-		this.initMap()
-		this.bd_list_active = this.bd_list[0].name
+		this.initMap();
+		this.bd_list_active = this.bd_list[0].name;
 	},
 	methods: {
 		select_city (item, index) {
 			if (index || index === 0) {
-				this.selectItem = index
-			}
-			this.bd_list_active = this.bd_list[index].name
+				this.selectItem = index;
+			};
+			this.bd_list_active = this.bd_list[index].name;
 		},
 		initMap () {
-			let map = new BMap.Map('content')
-			let point = new BMap.Point(116.404, 39.915)
-			map.centerAndZoom(point, 15)
-			map.enableScrollWheelZoom(true) // 开启鼠标滚轮缩放
-			map.addOverlay(new BMap.Marker(point))
-		}
-	}
-}
+			let map = new BMap.Map('content');
+			let point = new BMap.Point(116.404, 39.915);
+			map.centerAndZoom(point, 15);
+			map.enableScrollWheelZoom(true); // 开启鼠标滚轮缩放
+			map.addOverlay(new BMap.Marker(point));
+		},
+	},
+};
 </script>
 
 <style lang='scss' scoped>
@@ -222,5 +247,5 @@ export default {
 	height:100%;
 	position: relative;
 }
-@import '../assets/map.scss';
+@import '../../assets/css/map.scss';
 </style>

@@ -1,11 +1,11 @@
 <template>
-	<header class="header">
+	<header class="i_header">
 		<el-row>
 			<el-col :span="8">
 				<div class="logo"><a href="/"><img alt="logo" src="/static/img/logo.png"></a></div>
 			</el-col>
 			<el-col :span="16">
-				<div class="nav">
+				<div class="i_nav">
 					<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
 						<el-menu-item index="1"><i class="fa fa-pencil pr-5"></i>新建预案</el-menu-item>
 						<el-menu-item index="2"><i class="fa fa-arrow-up pr-5"></i>导入预案</el-menu-item>
@@ -31,55 +31,55 @@ export default {
 	data () {
 		return {
 			activeIndex: '0',
-			activeIndex2: '1'
-		}
+			activeIndex2: '1',
+		};
 	},
 	methods: {
 		handleSelect (key, keyPath) {
-			console.log(key, keyPath)
-		}
-	}
-}
+			console.log(key, keyPath);
+		},
+	},
+};
 </script>
 
-<style lang='scss' >
-.header{
-	border-bottom:1px solid #eaeaea;
-	.logo{
-		text-align: left;
-		margin-left:15px;
-		img{
-			margin-top:5px;
+<style lang='scss'>
+	.i_header{
+		border-bottom:1px solid #eaeaea;
+		.logo{
+			text-align: left;
+			margin-left:15px;
+			img{
+				margin-top:5px;
+			}
 		}
 	}
-}
-.pr-5{
-	margin-right:5px;
-}
-.el-menu--horizontal{font-family: '微软雅黑'}
-.nav{
-	float: right;
-	padding:0 15px;
-	.el-menu-item{
-		font-weight: 700;
+	.pr-5{
+		margin-right:5px;
 	}
-	.el-submenu__title{
-		font-weight: 700;
-	}
-	.el-menu--horizontal{
-		border:none;
+	.el-menu--horizontal{font-family: '微软雅黑'}
+	.i_nav{
+		float: right;
+		padding:0 15px;
 		.el-menu-item{
-			height:40px;
-			line-height: 40px;
+			font-weight: 700;
+		}
+		.el-submenu__title{
+			font-weight: 700;
+		}
+		.el-menu--horizontal{
 			border:none;
-		}
-		.el-submenu .el-submenu__title{
-			height:40px;
-			line-height: 40px;
-		}
-		.el-menu-item.is-active{
-			color:#f66;
+			.el-menu-item{
+				height:40px;
+				line-height: 40px;
+				border:none;
+			}
+			.el-submenu .el-submenu__title{
+				height:40px;
+				line-height: 40px;
+			}
+			.el-menu-item.is-active{
+				color:#f66;
+			}
 		}
 	}
-}
 </style>

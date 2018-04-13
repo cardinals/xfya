@@ -1,5 +1,5 @@
 <template>
-	<header class="header">
+	<header class="a_header">
 		<el-menu
 		:default-active="activeIndex"
 		class="el-menu-demo"
@@ -21,48 +21,47 @@
 export default {
 	data () {
 		return {
-			activeIndex: '1'
-		}
+			activeIndex: '1',
+		};
 	},
 	methods: {
 		handleSelect (key, keyPath) {
-			console.log(key, keyPath)
+			console.log(key, keyPath);
 		},
 		handleOpen () {
-			this.$store.state.aside = !this.$store.state.aside
-		}
-	}
-}
+			this.$store.state.aside = !this.$store.state.aside;
+		},
+	},
+};
 </script>
 
-<style lang='scss' scoped>
-.header{
-	.el-menu--horizontal{
-		border:none;
-		.el-menu-item{
-			height:50px;
-			line-height: 50px;
+<style lang='scss'>
+	.a_header{
+		.el-menu--horizontal{
 			border:none;
-			float:right;
+			.el-menu-item{
+				height:50px;
+				line-height: 50px;
+				border:none;
+				float:right;
+			}
+			.el-submenu .el-submenu__title{
+				height:50px;
+				line-height: 50px;
+			}
+			.el-menu-item.is-active{
+				color:#f66;
+			}
 		}
-		.el-submenu .el-submenu__title{
-			height:50px;
-			line-height: 50px;
-		}
-		.el-menu-item.is-active{
-			color:#f66;
+		.handleOpen{
+			outline: none;
+			cursor: pointer;
+			height:40px;
+			padding-top:10px;
+			padding-left:10px;
+			float:left;
+			color:#fff;
+			font-size:26px;
 		}
 	}
-	.handleOpen{
-		outline: none;
-		cursor: pointer;
-		height:40px;
-		padding-top:10px;
-		padding-left:10px;
-		float:left;
-		color:#fff;
-		font-size:26px;
-	}
-}
-
 </style>

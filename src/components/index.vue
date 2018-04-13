@@ -13,20 +13,20 @@
 </template>
 
 <script>
-import Header from './header.vue'
-import Map from './map.vue'
+import Header from './header.vue';
+import Map from './common/map.vue';
 export default {
 	name: 'index',
-	components: { Header, Map }
-}
+	components: { Header, Map, },
+};
 </script>
 
 <style lang='scss' scoped>
-#map {
-	position: absolute;
-	top: 40px;
-	left: 0;
-	right: 0;
-	bottom: 0;
-}
+	#map {
+		position: absolute;
+		top: 40px;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
 </style>

@@ -47,7 +47,11 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': require('../config/dev.env'),
-      'BASE_URL': '"http://localhost:8080"'
+      'BASE_URL': '"http://192.168.10.66:8888"'
+    }),
+    new webpack.ProvidePlugin({
+      jQuery:'jquery',
+      $:'jquery',
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.
