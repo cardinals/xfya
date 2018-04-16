@@ -4,9 +4,12 @@ import Login from '@/components/login';
 import Index from '@/components/index';
 import Map from '@/components/common/map';
 import BaseMap from '@/components/common/baseMap';
+// admin
 import Admin from '@/components/admin/admin';
 import Org from '@/components/admin/org';
 import User from '@/components/admin/user';
+import UserRights from '@/components/admin/userRights';
+import UserRole from '@/components/admin/userRole';
 
 Vue.use(Router);
 
@@ -42,7 +45,7 @@ export default new Router({
 				{
 					path: '',
 					name: '首页',
-					redirect: '',
+					redirect: 'org',
 				},
 				{
 					path: 'org',
@@ -53,6 +56,16 @@ export default new Router({
 					path: 'user',
 					name: '用户管理',
 					component: User,
+				},
+				{
+					path: 'rights',
+					name: '用户管理',
+					component: UserRights,
+				},
+				{
+					path: 'role',
+					name: '用户管理',
+					component: UserRole,
 				},
 				{
 					path: 'map',

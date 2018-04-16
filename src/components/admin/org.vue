@@ -94,12 +94,8 @@ export default {
 	},
 	methods: {
 		initTree () {
-			this.$http.post(BASE_URL + '/mgt/mgtHomePage', {}).then((res) => {
-				// 响应成功回调
-				console.log(res);
-			}, (res) => {
-				// 响应错误回调
-				console.log(res);
+			plan.remote.ajaxPost(BASE_URL + '/mgt/mgtHomePage', {}, (data) => {
+				console.log(data);
 			});
 		},
 		showInfo (data) {

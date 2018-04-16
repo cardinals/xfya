@@ -2,7 +2,7 @@
 	<div id="left" :class="$store.state.aside?'close':''">
 		<div class="admin-logo"></div>
 		<aside class="aside">
-			<el-menu :default-active="$route.path" router class="el-menu-vertical-demo"
+			<el-menu :default-active="$route.path" :default-openeds="[this.$route.path]" router class="el-menu-vertical-demo"
 			@open="handleOpen"
 			@close="handleClose"
 			:collapse="$store.state.aside"
@@ -12,10 +12,21 @@
 					<i class="el-icon-location"></i>
 					<span slot="title">组织机构管理</span>
 				</el-menu-item>
-				<el-menu-item index="/admin/user">
-					<i class="el-icon-menu"></i>
-					<span slot="title">角色权限管理</span>
-				</el-menu-item>
+				<el-submenu :index="$route.path">
+					<template slot="title">
+						<i class="el-icon-menu"></i>
+						<span>系统用户管理</span>
+					</template>
+					<el-menu-item-group>
+						<el-menu-item index="/admin/rights">角色权限管理</el-menu-item>
+					</el-menu-item-group>
+					<el-menu-item-group>
+						<el-menu-item index="/admin/role">用户角色管理</el-menu-item>
+					</el-menu-item-group>
+					<el-menu-item-group>
+						<el-menu-item index="/admin/user">用户管理</el-menu-item>
+					</el-menu-item-group>
+				</el-submenu>
 			</el-menu>
 		</aside>
 	</div>
@@ -30,10 +41,10 @@ export default {
 	},
 	methods: {
 		handleOpen (key, keyPath) {
-			console.log(key, keyPath);
+			// console.log(key, keyPath);
 		},
 		handleClose (key, keyPath) {
-			console.log(key, keyPath);
+			// console.log(key, keyPath);
 		},
 	},
 	store,

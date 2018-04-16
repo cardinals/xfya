@@ -31,6 +31,7 @@ plan.remote = {
 		var ret = null;
 		$.ajax({
 			type: 'POST',
+			contentType: 'application/json;charset=UTF-8',
 			async: callback || false,
 			url: url,
 			data: params,

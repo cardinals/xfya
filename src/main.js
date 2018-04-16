@@ -29,13 +29,14 @@ new Vue({
 	},
 	methods: {
 		checkLogin () {
+			console.log(this.$cookieStore.getCookie('loginName'));
 			//	检查是否存在cookie
 			if (!this.$cookieStore.getCookie('loginName')) {
 				//	如果没有登录状态则跳转到登录页
-				// this.$router.push('/login')
+				this.$router.push('/login');
 			} else {
 				//	否则跳转到登录后的页面
-				// this.$router.push('/')
+				this.$router.push('/');
 			}
 		},
 	},

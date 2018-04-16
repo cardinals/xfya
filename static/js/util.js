@@ -1,12 +1,13 @@
 // 获取cookie、
-var getCookie = function (name) {
-	var arr = [];
-	var reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)');
-	if (arr === document.cookie.match(reg)) {
-		return (arr[2]);
-	} else {
-		return null;
+var getCookie = function (cname) {
+	var name = cname + '=';
+	var ca = document.cookie.split(';');
+	for (var i = 0; i < ca.length; i++) {
+		var c = ca[i];
+		while (c.charAt(0) == ' ') c = c.substring(1);
+		if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
 	}
+	return '';
 };
 // 设置cookie,增加到vue实例方便全局调用
 var setCookie = function (name, value, expiredays) {
