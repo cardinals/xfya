@@ -27,10 +27,16 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-tabs': 'off',
     'no-undef': 'off',
+    'no-unused-vars': 'warn',
+    'semi': ['error', 'always'],
+    // 'comma-dangle': [2, 'always'],
     'indent': [
       'error',
       'tab',
       { 'SwitchCase': 1 }
-    ]
+    ],
+    'comma-dangle': ['error', {
+      'objects': 'always'
+    }]
   }
 }

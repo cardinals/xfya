@@ -9,7 +9,7 @@
 			</el-alert>
 		</div>
 		<div class="left_con left">
-			<Tree :nodeData="node_data" :isType="isType" nodeName="组织机构" :isNode="node_data[0].id" v-on:nodeId="showInfo" />
+			<Tree :nodeData="node_data" nodeName="组织机构" :isNode="isNode" @nodeId="showInfo" v-if="updateTree" />
 		</div>
 		<div class="right_con left">
 			<div slot="header" class="clearfix">
@@ -18,28 +18,45 @@
 			</div>
 			<div class="org_info">
 				<p>
-					<label for="">ID </label><span>{{nodeInfo.id}}</span>
-				</p>
-				<p>
 					<label for="">部门名称： </label><span>{{nodeInfo.name}}</span>
 				</p>
 				<p>
-					<label for="">地址： </label><span>{{nodeInfo.ads}}</span>
+					<label for="">地址： </label><span>{{nodeInfo.ads ? nodeInfo.ads : "未知"}}</span>
 				</p>
 				<p>
-					<label for="">车辆数： </label><span>{{nodeInfo.cls}}</span>
+					<label for="">车辆数： </label><span>{{nodeInfo.cls ? nodeInfo.cls : "未知"}}</span>
 				</p>
 				<p class="location">
 					<label for="">地理位置： </label><i class="el-icon-location"></i><span @click="openMap">点击设置</span>
 				</p>
 			</div>
 		</div>
+		<el-dialog
+			title="编辑信息"
+			:visible.sync="dialogEdit"
+			width="35%">
+			<el-form :model="nodeInfo" :rules="rules" ref="nodeInfo" label-width="100px" class="demo-ruleForm">
+				<el-form-item label="部门名称：" prop="name">
+					<el-input v-model="nodeInfo.name"></el-input>
+				</el-form-item>
+				<el-form-item label="地址：" prop="ads">
+					<el-input v-model="nodeInfo.ads"></el-input>
+				</el-form-item>
+				<el-form-item label="车辆数：" prop="cls">
+					<el-input v-model="nodeInfo.cls"></el-input>
+				</el-form-item>
+			</el-form>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="closeDialog('nodeInfo')">取 消</el-button>
+				<el-button type="primary" @click="submitForm('nodeInfo')">确 定</el-button>
+			</span>
+		</el-dialog>
 		<!-- 地图设置 -->
 		<el-dialog
 			title="查看-更新地理位置"
-			:visible.sync="dialogVisible"
+			:visible.sync="dialogMap"
 			width="70%">
-			<BaseMap :nodeInfo="nodeInfo" />
+			<BaseMap :nodeInfo="nodeInfo" @mapSite="updateMap" v-if='dialogMap' />
 		</el-dialog>
 	</div>
 </template>
@@ -52,40 +69,22 @@ export default {
 	components: { Tree, BaseMap, },
 	data () {
 		return {
-			dialogVisible: false,
-			isType: 4,
-			node_data: [{
-				label: '北京总队',
-				id: 1,
-				children: [{
-					label: '海淀支队',
-					id: 11,
-					children: [{
-						label: '知春里中队',
-						id: 111,
-					}],
-				}],
-			}, {
-				label: '山东总队',
-				children: [{
-					label: '济南支队',
-					id: 2,
-					children: [{
-						label: '章丘中队',
-						id: 21,
-					}],
-				}, {
-					label: '济宁支队',
-					children: [{
-						label: '曲阜中队',
-						id: 211,
-					}],
-				}],
-			}],
+			dialogMap: false,
+			dialogEdit: false,
+			node_data: [],
+			isNode: '1',
+			updateTree: true,
 			nodeInfo: {
-				name: '北京市消防总队',
-				ads: '未知',
-				cls: '未知',
+				id: '',
+			},
+			rules: {
+				name: [
+					{
+						required: true,
+						message: '请输入部门名称',
+						trigger: 'blur',
+					}
+				],
 			},
 		};
 	},
@@ -93,24 +92,83 @@ export default {
 		this.initTree();
 	},
 	methods: {
-		initTree () {
-			plan.remote.ajaxPost(BASE_URL + '/mgt/mgtHomePage', {}, (data) => {
-				console.log(data);
+		initTree (off) {
+			plan.remote.ajaxPost(`${BASE_URL}/mgt/mgtHomePage`, '', (back) => {
+				if (back.code === 200) {
+					this.$set(this.node_data, 0, back.result);
+					var attach = back.result.attach ? JSON.parse(back.result.attach) : '';
+					this.nodeInfo = {
+						id: back.result.id,
+						name: back.result.name,
+						ads: attach ? attach.ads : '',
+						cls: attach ? attach.cls : '',
+						mapSite: back.result.mapSite,
+					};
+					if (!off) {
+						this.isNode = this.node_data[0].id;
+					} else {
+						this.showInfo(this.isNode);
+					}
+				}
 			});
 		},
-		showInfo (data) {
-			this.nodeInfo = {
-				id: data.id,
-				name: '北京市消防总队',
-				ads: '未知',
-				cls: '未知',
-			};
+		showInfo (id) {
+			var data = { 'orgId': id, };
+			plan.remote.ajaxPost(`${BASE_URL}/mgt/getOrgById/` + id, JSON.stringify(data), (back) => {
+				var attach = back.result.attach ? JSON.parse(back.result.attach) : '';
+				this.nodeInfo = {
+					id: back.result.id,
+					name: back.result.name,
+					ads: attach ? attach.ads : '',
+					cls: attach ? attach.cls : '',
+					mapSite: back.result.mapSite,
+				};
+			});
+		},
+		// 更新地图信息
+		updateMap (info) {
+			this.dialogMap = false;
+			this.nodeInfo = info;
 		},
 		handleOpen () {
-			this.isType++;
+			this.resetForm('nodeInfo');
+			this.dialogEdit = true;
 		},
 		openMap () {
-			this.dialogVisible = true;
+			this.dialogMap = true;
+		},
+		// 编辑信息
+		submitForm (formName) {
+			this.$refs[formName].validate((valid) => {
+				if (valid) {
+					var param = {
+						'id': this.nodeInfo.id,
+						'attach': JSON.stringify({
+							'ads': this.nodeInfo.ads,
+							'cls': this.nodeInfo.cls,
+						}),
+						'name': this.nodeInfo.name,
+					};
+					plan.remote.ajaxPost(`${BASE_URL}/mgt/upOrgInfo`, JSON.stringify(param), (back) => {
+						this.isNode = this.nodeInfo.id;
+						this.initTree(1);
+						this.resetForm('nodeInfo');
+					});
+				} else {
+					return false;
+				}
+			});
+		},
+		// 关闭弹框
+		closeDialog (formName) {
+			this.dialogEdit = false;
+			this.$refs[formName].resetFields();
+		},
+		// 重置表单
+		resetForm (formName) {
+			if (this.$refs[formName] !== undefined) {
+				this.$refs[formName].resetFields();
+			}
 		},
 	},
 };
@@ -137,7 +195,7 @@ export default {
 	}
 	.left_con{
 		width:35%;
-		margin:10px 10% 0 2%;
+		margin:1% 10% 0 2%;
 		.el-tree-node__label{
 			font-size:16px;
 		}

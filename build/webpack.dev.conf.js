@@ -47,7 +47,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': require('../config/dev.env'),
-      'BASE_URL': '"http://192.168.10.178:8888"'
+      'BASE_URL': '"http://localhost:8888"'
     }),
     new webpack.ProvidePlugin({
       jQuery:'jquery',

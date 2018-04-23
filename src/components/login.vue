@@ -16,8 +16,8 @@
 export default {
 	data () {
 		return {
-			username: '',
-			password: '',
+			username: 'zhangsan',
+			password: 'zhangsan',
 			msg: '',
 		};
 	},
@@ -36,7 +36,7 @@ export default {
 					spinner: 'el-icon-loading',
 					background: 'rgba(0, 0, 0, 0.7)',
 				});
-				plan.remote.ajaxPost(BASE_URL + '/user/login', JSON.stringify(data), (back) => {
+				plan.remote.ajaxPost(`${BASE_URL}/user/login`, JSON.stringify(data), (back) => {
 					// 响应成功回调
 					console.log(back);
 					this.$cookieStore.setCookie('loginName', this.username, 1);

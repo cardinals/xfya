@@ -1,7 +1,8 @@
-/**
- * 消防预案
- * @author yanchaowei <yanchaowei@uinnova.com>
- * @date 2018-4-13
+/*
+ * @Author: yanchaowei@uinnova.com
+ * @Date: 2018-04-18 16:49:34
+ * @Last Modified by: yanchaowei@uinnova.com
+ * @Last Modified time: 2018-04-19 14:39:11
  */
 
 var plan = {};
@@ -13,9 +14,14 @@ plan.remote = {
 		$.ajax({
 			type: 'GET',
 			async: callback || false,
+			contentType: 'application/json;charset=UTF-8',
 			url: url,
 			data: params,
 			cache: false,
+			xhrFields: {
+				withCredentials: true,
+			},
+			crossDomain: true,
 			success: callback || function (back) {
 				ret = back;
 			},
@@ -31,11 +37,15 @@ plan.remote = {
 		var ret = null;
 		$.ajax({
 			type: 'POST',
-			contentType: 'application/json;charset=UTF-8',
 			async: callback || false,
+			contentType: 'application/json;charset=UTF-8',
+			cache: false,
 			url: url,
 			data: params,
-			cache: false,
+			xhrFields: {
+				withCredentials: true,
+			},
+			crossDomain: true,
 			success: callback || function (back) {
 				ret = back;
 			},
