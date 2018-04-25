@@ -4,10 +4,12 @@
 			<aAside/>
 			<div class="main">
 				<aHeader/>
-				<div class="br_nav">
-					<breadCrumb />
+				<div class="content_scroll">
+					<div class="br_nav">
+						<breadCrumb />
+					</div>
+					<router-view/>
 				</div>
-				<router-view/>
 			</div>
 		</div>
 	</div>
@@ -38,6 +40,23 @@ export default {
 		right: 0;
 		bottom: 0;
 		transition: all .3s
+	}
+	.content_scroll{
+		width: 100%;
+		position: absolute;
+		top: 50px;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+	.clearfix{
+		width: 100%;
+		position: absolute;
+		top: 50px;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		overflow-y: auto;
 	}
 	.close .main{
 		left:60px;

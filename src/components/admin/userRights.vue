@@ -1,11 +1,12 @@
 <template>
-	<div>
+	<div class="clearfix">
 		<div class="tipmsg">
 			<el-alert
-				title="角色权限管理"
+				title=""
 				type="info"
 				:closable="false"
 				show-icon>
+				角色权限管理
 			</el-alert>
 		</div>
 		<div class="con">
@@ -154,7 +155,7 @@ export default {
 					plan.remote.ajaxPost(`${BASE_URL}/permission/${type}`, JSON.stringify(param), (back) => {
 						if (back.code === 200) {
 							this.initRights();
-							this.resetForm('ruleForm');
+							this.closeDialog('ruleForm');
 							this.$message.success(back.message);
 						} else {
 							this.$message.error(back.message);

@@ -1,7 +1,7 @@
 <template>
-	<div>
+	<div class="clearfix">
 		<el-card class="box-card">
-			<div slot="header" class="clearfix">
+			<div slot="header" class="fix">
 				<span>{{nodeName}}</span>
 			</div>
 			<el-tree :data="data" :props="defaultProps" :highlight-current="true" ref='tree'
@@ -39,7 +39,7 @@
 
 <script>
 export default {
-	props: ['nodeData', 'nodeName', 'isNode'],
+	props: ['nodeData', 'nodeName', 'isNode', 'noAdd'],
 	data () {
 		return {
 			data: this.nodeData,
@@ -119,6 +119,7 @@ export default {
 							}
 							data.nodes.push(newChild);
 							this.$message.success(back.message);
+							this.closeDialog('ruleForm');
 						} else {
 							this.$message.error(back.message);
 						}
@@ -172,15 +173,23 @@ export default {
 		},
 		// 显示添加编辑按钮
 		renderContent (h, { node, data, store, }) {
-			return (
-				<span class='custom-tree-node'>
-					<span>{node.label}</span>
-					<span>
-						<el-button size='mini' type='text' on-click={ () => this.append(data) }><i class="el-icon-circle-plus-outline" title="添加"></i></el-button>
-						<el-button size='mini' type='text' on-click={ () => this.remove(node, data) }><i class="el-icon-circle-close-outline" title="删除"></i></el-button>
+			if (this.noAdd) {
+				return (
+					<span class='custom-tree-node'>
+						<span>{node.label}</span>
 					</span>
-				</span>
-			);
+				);
+			} else {
+				return (
+					<span class='custom-tree-node'>
+						<span>{node.label}</span>
+						<span>
+							<el-button size='mini' type='text' on-click={ () => this.append(data) }><i class="el-icon-circle-plus-outline" title="添加"></i></el-button>
+							<el-button size='mini' type='text' on-click={ () => this.remove(node, data) }><i class="el-icon-circle-close-outline" title="删除"></i></el-button>
+						</span>
+					</span>
+				);
+			}
 		},
 		// 关闭弹框
 		closeDialog (formName) {
@@ -194,8 +203,10 @@ export default {
 			}
 		},
 	},
-	wacth: {
-		'isNode': 'nodeActive',
+	watch: {
+		isNode () {
+			this.nodeActive();
+		},
 	},
 };
 </script>
@@ -206,7 +217,7 @@ export default {
 		text-align: center;
 		color: rgb(192, 204, 218);
 	}
-	.clearfix{
+	.fix{
 		font-size:16px;
 		font-weight: bold;
 	}

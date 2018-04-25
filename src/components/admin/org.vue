@@ -1,18 +1,19 @@
 <template>
-	<div>
+	<div class="clearfix">
 		<div class="tipmsg">
 			<el-alert
-				title="部门结构管理"
+				title=""
 				type="info"
 				:closable="false"
 				show-icon>
+				部门结构管理
 			</el-alert>
 		</div>
 		<div class="left_con left">
-			<Tree :nodeData="node_data" nodeName="组织机构" :isNode="isNode" @nodeId="showInfo" v-if="updateTree" />
+			<Tree :nodeData="nodeData" nodeName="组织机构" :isNode="isNode" @nodeId="showInfo" v-if="updateTree" />
 		</div>
 		<div class="right_con left">
-			<div slot="header" class="clearfix">
+			<div slot="header" class="fix">
 				<span class="left">基本信息</span>
 				<span class="right" @click="handleOpen()">编辑</span>
 			</div>
@@ -71,7 +72,7 @@ export default {
 		return {
 			dialogMap: false,
 			dialogEdit: false,
-			node_data: [],
+			nodeData: [],
 			isNode: '1',
 			updateTree: true,
 			nodeInfo: {
@@ -95,7 +96,7 @@ export default {
 		initTree (off) {
 			plan.remote.ajaxPost(`${BASE_URL}/mgt/mgtHomePage`, '', (back) => {
 				if (back.code === 200) {
-					this.$set(this.node_data, 0, back.result);
+					this.$set(this.nodeData, 0, back.result);
 					var attach = back.result.attach ? JSON.parse(back.result.attach) : '';
 					this.nodeInfo = {
 						id: back.result.id,
@@ -105,7 +106,7 @@ export default {
 						mapSite: back.result.mapSite,
 					};
 					if (!off) {
-						this.isNode = this.node_data[0].id;
+						this.isNode = this.nodeData[0].id;
 					} else {
 						this.showInfo(this.isNode);
 					}
@@ -131,7 +132,6 @@ export default {
 			this.nodeInfo = info;
 		},
 		handleOpen () {
-			this.resetForm('nodeInfo');
 			this.dialogEdit = true;
 		},
 		openMap () {
@@ -152,7 +152,7 @@ export default {
 					plan.remote.ajaxPost(`${BASE_URL}/mgt/upOrgInfo`, JSON.stringify(param), (back) => {
 						this.isNode = this.nodeInfo.id;
 						this.initTree(1);
-						this.resetForm('nodeInfo');
+						this.closeDialog('nodeInfo');
 					});
 				} else {
 					return false;
@@ -205,13 +205,13 @@ export default {
 		padding:1%;
 		text-align: left;
 	}
-	.clearfix{
+	.fix{
 		font-size:16px;
 		font-weight: bold;
 		line-height:55px;
 		height:55px;
 	}
-	.clearfix .right{
+	.fix .right{
 		font-size:14px;
 		font-weight: 100;
 		color:#409EFF;

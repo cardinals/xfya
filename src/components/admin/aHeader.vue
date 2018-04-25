@@ -8,7 +8,7 @@
 		background-color="#545c64"
 		text-color="#fff"
 		active-text-color="#ffd04b">
-		<el-menu-item index="1">退出</el-menu-item>
+		<el-menu-item index="1" @click="logout">退出</el-menu-item>
 		<el-menu-item index="2">消息中心</el-menu-item>
 		<div class="handleOpen" @click="handleOpen">
 			<i class="fa fa-align-justify pr-5"></i>
@@ -25,8 +25,23 @@ export default {
 		};
 	},
 	methods: {
+		logout () {
+			this.$confirm('确定退出系统？', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning',
+			}).then(() => {
+				plan.remote.ajaxPost(`${BASE_URL}/user/logout`, '', (back) => {
+					// 响应成功回调
+					this.$cookieStore.delCookie('loginName');
+					this.$router.push('/login');
+					this.$message.success('退出成功');
+				});
+			}).catch(() => {
+			});
+		},
 		handleSelect (key, keyPath) {
-			console.log(key, keyPath);
+			// console.log(key, keyPath);
 		},
 		handleOpen () {
 			this.$store.state.aside = !this.$store.state.aside;

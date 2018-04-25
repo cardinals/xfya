@@ -16,12 +16,22 @@
 export default {
 	data () {
 		return {
-			username: 'zhangsan',
-			password: 'zhangsan',
+			username: 'admin',
+			password: 'admin',
 			msg: '',
 		};
 	},
+	mounted () {
+		this.keyUp();
+	},
 	methods: {
+		keyUp () {
+			document.onkeydown = (e) => {
+				if (e.keyCode === 13) {
+					this.login();
+				}
+			};
+		},
 		login: function (e) {
 			if (this.username === '' || this.password === '') {
 				this.msg = '请输入用户名和密码';
@@ -38,7 +48,6 @@ export default {
 				});
 				plan.remote.ajaxPost(`${BASE_URL}/user/login`, JSON.stringify(data), (back) => {
 					// 响应成功回调
-					console.log(back);
 					this.$cookieStore.setCookie('loginName', this.username, 1);
 					setTimeout(() => {
 						loading.close();

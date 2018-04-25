@@ -1,11 +1,12 @@
 <template>
-	<div>
+	<div class="clearfix">
 		<div class="tipmsg">
 			<el-alert
-				title="用户角色管理"
+				title=""
 				type="info"
 				:closable="false"
 				show-icon>
+				用户角色管理
 			</el-alert>
 		</div>
 		<div class="con">
@@ -143,18 +144,20 @@ export default {
 					this.options = back.result;
 				}
 			});
-			this.getPermList();
 			if (type === 3) {
 				this.isAdd = false;
 				this.title = '查看角色';
+				this.getPermList();
 			} else if (type === 2) {
 				this.isAdd = true;
 				this.isEdit = true;
 				this.title = '编辑角色';
+				this.getPermList();
 			} else {
 				this.isAdd = true;
 				this.isEdit = false;
 				this.title = '添加角色';
+				this.values = [];
 				this.ruleForm = {
 					roleName: '',
 					roleLevel: '1',
@@ -166,7 +169,7 @@ export default {
 		// 当前角色的权限列表
 		getPermList () {
 			this.values = [];
-			plan.remote.ajaxGet(`${BASE_URL}/permission/getPermissionListByRoleId/${this.ruleForm.roleId}`, '', (back) => {
+			plan.remote.ajaxPost(`${BASE_URL}/permission/getPermissionListByRoleId/${this.ruleForm.roleId}`, '', (back) => {
 				if (back.code === 200) {
 					for (let i = 0; i < back.result.length; i++) {
 						this.values.push(back.result[i].permissionId);
@@ -183,13 +186,14 @@ export default {
 						'roleName': this.ruleForm.roleName,
 						'roleLevel': parseInt(this.ruleForm.roleLevel),
 						'description': this.ruleForm.description,
+						'permissionIds': this.values.join(','),
 					};
 					// 根据isEdit 判断是添加还是修改
 					var type = this.isEdit ? 'updateRoleInfo' : 'saveRoleInfo';
 					plan.remote.ajaxPost(`${BASE_URL}/role/${type}`, JSON.stringify(param), (back) => {
 						if (back.code === 200) {
 							this.initRights();
-							this.resetForm('ruleForm');
+							this.closeDialog('ruleForm');
 							this.$message.success(back.message);
 						} else {
 							this.$message.error(back.message);

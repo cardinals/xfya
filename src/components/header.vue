@@ -10,7 +10,11 @@
 						<el-menu-item index="1"><i class="fa fa-pencil pr-5"></i>新建预案</el-menu-item>
 						<el-menu-item index="2"><i class="fa fa-arrow-up pr-5"></i>导入预案</el-menu-item>
 						<el-submenu index="3">
-							<template slot="title"><i class="fa fa-user pr-5"></i>admin</template>
+							<template slot="title">
+								<router-link to="/admin" title="进入后台">
+									<i class="fa fa-user pr-5"></i>admin
+								</router-link>
+							</template>
 							<el-menu-item index="3-1"><i class="fa fa-file-text-o pr-5"></i>辖区预案管理</el-menu-item>
 							<el-menu-item index="3-2"><i class="fa fa-sitemap pr-5"></i>部门结构管理</el-menu-item>
 							<el-menu-item index="3-3"><i class="fa fa-users pr-5"></i>系统用户管理</el-menu-item>
@@ -18,7 +22,7 @@
 							<el-menu-item index="3-5"><i class="fa fa-gavel pr-5"></i>系统授权管理</el-menu-item>
 							<el-menu-item index="3-6"><i class="fa fa-cloud-upload pr-5"></i>导入Word预案</el-menu-item>
 						</el-submenu>
-						<el-menu-item index="4"><i class="fa fa-sign-out pr-5"></i>退出</el-menu-item>
+						<el-menu-item index="4" @click="logout"><i class="fa fa-sign-out pr-5"></i>退出</el-menu-item>
 					</el-menu>
 				</div>
 			</el-col>
@@ -36,13 +40,34 @@ export default {
 	},
 	methods: {
 		handleSelect (key, keyPath) {
-			console.log(key, keyPath);
+			// console.log(key, keyPath);
+		},
+		logout () {
+			this.$confirm('确定退出系统？', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning',
+			}).then(() => {
+				plan.remote.ajaxPost(`${BASE_URL}/user/logout`, '', (back) => {
+					// 响应成功回调
+					this.$cookieStore.delCookie('loginName');
+					this.$router.push('/login');
+					this.$message.success('退出成功');
+				});
+			}).catch(() => {
+			});
 		},
 	},
 };
 </script>
 
 <style lang='scss'>
+	a {
+		text-decoration: none;
+	}
+	.router-link-active {
+		text-decoration: none;
+	}
 	.i_header{
 		border-bottom:1px solid #eaeaea;
 		.logo{
@@ -81,5 +106,8 @@ export default {
 				color:#f66;
 			}
 		}
+	}
+	.el-menu--collapse .el-menu .el-submenu, .el-menu--popup{
+		min-width:auto;
 	}
 </style>
