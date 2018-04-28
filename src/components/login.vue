@@ -48,7 +48,8 @@ export default {
 				});
 				plan.remote.ajaxPost(`${BASE_URL}/user/login`, JSON.stringify(data), (back) => {
 					// 响应成功回调
-					this.$cookieStore.setCookie('loginName', this.username, 1);
+					this.$cookieStore.setCookie('loginName', back.result.username, 1);
+					this.$cookieStore.setCookie('loginToken', back.result.token, 1);
 					setTimeout(() => {
 						loading.close();
 						this.$router.push('/');

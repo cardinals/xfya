@@ -226,7 +226,7 @@ export default {
 				}
 			});
 			// 获取所有部门列表
-			plan.remote.ajaxPost(`${BASE_URL}//mgt/getAllOrg`, '', (back) => {
+			plan.remote.ajaxPost(`${BASE_URL}/mgt/getAllOrg`, '', (back) => {
 				if (back.code === 200) {
 					this.orgOptions = back.result.orgList;
 				}

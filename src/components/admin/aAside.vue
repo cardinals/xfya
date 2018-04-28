@@ -9,12 +9,12 @@
 			background-color="#545c64"
 			text-color="#fff">
 				<el-menu-item index="/admin/org">
-					<i class="el-icon-location"></i>
+					<i class="fa fa-lg fa-sitemap"></i>
 					<span slot="title">组织机构管理</span>
 				</el-menu-item>
 				<el-submenu index="/admin/user">
 					<template slot="title">
-						<i class="el-icon-menu"></i>
+						<i class="fa fa-lg fa-users"></i>
 						<span>系统用户管理</span>
 					</template>
 					<el-menu-item-group>
@@ -27,8 +27,12 @@
 						<el-menu-item index="/admin/user/rights">角色权限管理</el-menu-item>
 					</el-menu-item-group>
 				</el-submenu>
+				<el-menu-item index="/admin/infoPoint">
+					<i class="fa fa-lg fa-flag"></i>
+					<span slot="title">信息点配置</span>
+				</el-menu-item>
 				<el-menu-item index="/admin/setting">
-					<i class="el-icon-setting"></i>
+					<i class="fa fa-lg fa-cogs"></i>
 					<span slot="title">系统配置管理</span>
 				</el-menu-item>
 				<!-- <el-submenu index="/admin/setting">
@@ -68,6 +72,11 @@ export default {
 		},
 		handleClose (key, keyPath) {
 			// console.log(key, keyPath);
+		},
+	},
+	watch: {
+		$route () {
+			this.handleOpen(this.$route.path);
 		},
 	},
 	store,

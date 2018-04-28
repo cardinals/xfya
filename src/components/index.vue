@@ -3,9 +3,6 @@
 		<Header/>
 		<div class="content">
 			<div id="map">
-				<Map/>
-			</div>
-			<div class="main">
 				<router-view/>
 			</div>
 		</div>
@@ -14,10 +11,9 @@
 
 <script>
 import Header from './header.vue';
-import Map from './common/map.vue';
 export default {
 	name: 'index',
-	components: { Header, Map, },
+	components: { Header, },
 };
 </script>
 

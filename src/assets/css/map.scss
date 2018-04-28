@@ -97,7 +97,7 @@
 .cardlist {
     width: 368px;
     position: relative;
-    z-index: 0;
+    z-index: 100;
 }
 .cardlist .card.animated-card {
     -webkit-animation-name: card-drop;

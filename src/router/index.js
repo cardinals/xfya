@@ -8,6 +8,7 @@ import BaseMap from '@/components/common/baseMap';
 // admin
 import Admin from '@/components/admin/admin';
 import Org from '@/components/admin/org';
+import InfoPoint from '@/components/admin/infoPoint';
 import User from '@/components/admin/user';
 import UserList from '@/components/admin/userList';
 import UserRights from '@/components/admin/userRights';
@@ -99,6 +100,11 @@ export default new Router({
 							component: UserRole,
 						}
 					],
+				},
+				{
+					path: 'infoPoint',
+					name: '信息点配置',
+					component: InfoPoint,
 				},
 				{
 					path: 'map',

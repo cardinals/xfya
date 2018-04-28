@@ -362,3 +362,19 @@ template {
 .clearfix:after { 
   clear: both; 
 }
+/* 树形结构样式 */
+.box-card .el-tree-node__label{
+  font-size:16px;
+}
+.box-card .custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+}
+.box-card .el-card__body {
+  max-height: 600px;
+  overflow-y: auto;
+}

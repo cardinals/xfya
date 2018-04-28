@@ -8,12 +8,13 @@ import App from './App';
 import router from './router';
 import store from './vuex/store';
 import VueResource from 'vue-resource';
-import {getCookie, setCookie, delCookie} from '../static/js/util';
+import {getCookie, setCookie, delCookie, newGuid} from '../static/js/util';
 Vue.prototype.$cookieStore = {
 	getCookie,
 	setCookie,
 	delCookie,
 };
+Vue.prototype.$newGuid = newGuid;
 
 Vue.config.productionTip = false;
 

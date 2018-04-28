@@ -221,15 +221,4 @@ export default {
 		font-size:16px;
 		font-weight: bold;
 	}
-	.el-tree-node__label{
-		font-size:16px;
-	}
-	.custom-tree-node {
-		flex: 1;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		font-size: 14px;
-		padding-right: 8px;
-	}
 </style>
