@@ -10,6 +10,7 @@
 		active-text-color="#ffd04b">
 		<el-menu-item index="1" @click="logout">退出</el-menu-item>
 		<el-menu-item index="2">消息中心</el-menu-item>
+		<el-menu-item index="3">{{$cookieStore.getCookie('loginName')}}</el-menu-item>
 		<div class="handleOpen" @click="handleOpen">
 			<i class="fa fa-align-justify pr-5"></i>
 		</div>

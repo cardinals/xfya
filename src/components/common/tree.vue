@@ -130,7 +130,12 @@ export default {
 			});
 		},
 		// 添加或编辑部门
-		append (data) {
+		append (data, type) {
+			if (type) {
+				this.handleNodeClick(data);
+				this.$emit('openEdit', data.id);
+				return;
+			}
 			this.resetForm('ruleForm');
 			this.dialogVisible = true;
 			this.nodeDate = data;
@@ -184,6 +189,7 @@ export default {
 					<span class='custom-tree-node'>
 						<span>{node.label}</span>
 						<span>
+							<el-button size='mini' type='text' on-click={ () => this.append(data, 1) }><i class="el-icon-edit-outline" title="编辑"></i></el-button>
 							<el-button size='mini' type='text' on-click={ () => this.append(data) }><i class="el-icon-circle-plus-outline" title="添加"></i></el-button>
 							<el-button size='mini' type='text' on-click={ () => this.remove(node, data) }><i class="el-icon-circle-close-outline" title="删除"></i></el-button>
 						</span>

@@ -3,7 +3,7 @@
 		<div class='container'>
 			<img src='/static/img/form.png'>
 			<div class='ipanel'>
-				<input id='username' value='' v-model='username'><br>
+				<input id='username' value='' v-model='username'>
 				<input type='password' id='password' value='' v-model='password'>
 				<div class='btn-login' @click='login'></div>
 				<input class='error-login' v-model='msg' />
@@ -41,19 +41,24 @@ export default {
 					'password': this.password,
 				};
 				const loading = this.$loading({
-					lock: true,
-					text: 'Loading',
+					lock: false,
+					text: '登录中',
 					spinner: 'el-icon-loading',
-					background: 'rgba(0, 0, 0, 0.7)',
+					background: 'rgba(0, 0, 0, 0.8)',
 				});
 				plan.remote.ajaxPost(`${BASE_URL}/user/login`, JSON.stringify(data), (back) => {
-					// 响应成功回调
-					this.$cookieStore.setCookie('loginName', back.result.username, 1);
-					this.$cookieStore.setCookie('loginToken', back.result.token, 1);
-					setTimeout(() => {
+					if (back.code === 200) {
+						// 响应成功回调
+						this.$cookieStore.setCookie('loginName', back.result.username, 1);
+						this.$cookieStore.setCookie('loginToken', back.result.token, 1);
+						setTimeout(() => {
+							loading.close();
+							this.$router.push('/');
+						}, 1000);
+					} else {
 						loading.close();
-						this.$router.push('/');
-					}, 1000);
+						this.msg = '用户名或密码错误';
+					}
 				});
 			};
 		},
@@ -63,11 +68,8 @@ export default {
 
 <style lang='scss' scoped>
 	#index{
-		position: absolute;
-		left:0;
-		right:0;
-		top:0;
-		bottom:0;
+		position: relative;
+		height:100%;
 		background-image: url('/static/img/bg.jpg');
 		overflow: hidden;
 		background-size: cover;
@@ -86,7 +88,7 @@ export default {
 		.ipanel {
 			width: 160px;
 			margin: auto;
-			margin-top: -220px;
+			margin-top: -225px;
 			padding-left: 40px;
 		}
 		input {
@@ -95,9 +97,10 @@ export default {
 			outline: none;
 			border: 0;
 			width:100%;
+			line-height: 1.5;
 			margin: 0 5px;
 			&:first-child {
-				padding-bottom: 29px;
+				margin-bottom: 24px;
 			}
 		}
 		.btn-login {

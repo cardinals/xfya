@@ -10,12 +10,12 @@
 			</el-alert>
 		</div>
 		<div class="left_con left">
-			<Tree :nodeData="nodeData" nodeName="组织机构" :isNode="isNode" @nodeId="showInfo" v-if="updateTree" />
+			<Tree :nodeData="nodeData" nodeName="组织机构" :isNode="isNode" @nodeId="showInfo" @openEdit="handleOpen()" v-if="updateTree" />
 		</div>
 		<div class="right_con left">
 			<div slot="header" class="fix">
 				<span class="left">基本信息</span>
-				<span class="right" @click="handleOpen()">编辑</span>
+				<!-- <span class="right" @click="handleOpen()">编辑</span> -->
 			</div>
 			<div class="org_info">
 				<p>
@@ -28,7 +28,7 @@
 					<label for="">车辆数： </label><span>{{nodeInfo.cls ? nodeInfo.cls : "未知"}}</span>
 				</p>
 				<p class="location">
-					<label for="">地理位置： </label><i class="el-icon-location"></i><span @click="openMap">点击设置</span>
+					<label for="">地理位置： </label><span @click="openMap"><i class="el-icon-location"></i>点击设置</span>
 				</p>
 			</div>
 		</div>
@@ -57,7 +57,10 @@
 			title="查看-更新地理位置"
 			:visible.sync="dialogMap"
 			width="70%">
-			<BaseMap :nodeInfo="nodeInfo" @mapSite="updateMap" v-if='dialogMap' />
+			<BaseMap :info="nodeInfo.mapSite" @mapSite="updateMap" v-if='dialogMap' />
+			<div class="save_btn">
+				<el-button type="success" size="small" round @click="saveMapSite">保存更改</el-button><span></span>
+			</div>
 		</el-dialog>
 	</div>
 </template>
@@ -126,10 +129,24 @@ export default {
 				};
 			});
 		},
+		// 提交地图信息
+		saveMapSite () {
+			var param = {
+				'id': this.nodeInfo.id,
+				'mapSite': this.nodeInfo.mapSite,
+			};
+			plan.remote.ajaxPost(`${BASE_URL}/mgt/upOrgInfo`, JSON.stringify(param), (back) => {
+				if (back.code === 200) {
+					this.dialogMap = false;
+					this.$message.success(back.message);
+				} else {
+					this.$message.error(back.message);
+				}
+			});
+		},
 		// 更新地图信息
 		updateMap (info) {
-			this.dialogMap = false;
-			this.nodeInfo = info;
+			this.nodeInfo.mapSite = JSON.stringify(info);
 		},
 		handleOpen () {
 			this.dialogEdit = true;
@@ -204,6 +221,20 @@ export default {
 		width:49%;
 		padding:1%;
 		text-align: left;
+		.org_info > p{
+			overflow: hidden;
+			line-height: 40px;
+			label{
+				width:20%;
+				text-align: right;
+				float:left;
+			}
+			span{
+				width:75%;
+				margin-left:2%;
+				float:left;
+			}
+		}
 	}
 	.fix{
 		font-size:16px;
@@ -221,5 +252,10 @@ export default {
 	.location i,.location span{
 		color:$color;
 		cursor: pointer;
+	}
+	.save_btn{
+		position: absolute;
+		right:50px;
+		top:40px;
 	}
 </style>

@@ -7,12 +7,15 @@
 			<el-col :span="16">
 				<div class="i_nav">
 					<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-						<el-menu-item index="1"><i class="fa fa-pencil pr-5"></i>新建预案</el-menu-item>
+						<el-menu-item index="1">
+							<router-link to="/addPlan" title="新建预案">
+								<i class="fa fa-pencil pr-5"></i>新建预案
+							</router-link></el-menu-item>
 						<el-menu-item index="2"><i class="fa fa-arrow-up pr-5"></i>导入预案</el-menu-item>
 						<el-submenu index="3">
 							<template slot="title">
 								<router-link to="/admin" title="进入后台">
-									<i class="fa fa-user pr-5"></i>admin
+									<i class="fa fa-user pr-5"></i>{{$cookieStore.getCookie('loginName')}}
 								</router-link>
 							</template>
 							<el-menu-item index="3-1"><i class="fa fa-file-text-o pr-5"></i>辖区预案管理</el-menu-item>
@@ -87,6 +90,9 @@ export default {
 		padding:0 15px;
 		.el-menu-item{
 			font-weight: 700;
+		}
+		.el-submenu a{
+			color:#909399;
 		}
 		.el-submenu__title{
 			font-weight: 700;

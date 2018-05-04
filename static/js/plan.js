@@ -2,7 +2,7 @@
  * @Author: yanchaowei@uinnova.com
  * @Date: 2018-04-18 16:49:34
  * @Last Modified by: yanchaowei@uinnova.com
- * @Last Modified time: 2018-04-28 18:00:17
+ * @Last Modified time: 2018-05-03 15:58:22
  */
 var plan = {};
 plan.remote = {
@@ -52,6 +52,30 @@ plan.remote = {
 				withCredentials: true,
 			},
 			crossDomain: true,
+			success: function (back) {
+				if (back.code === 100002) {
+					delCookie('loginName');
+					window.location.reload();
+				}
+				callback ? callback(back) : ret = back;
+			},
+			dataType: 'json',
+			error: function (req, status, ex) {
+			},
+			timeout: 60000,
+		});
+		return ret;
+	},
+	ajaxUpload: function (url, params, callback) {
+		var token = getCookie('loginToken');
+		var ret = null;
+		$.ajax({
+			type: 'POST',
+			headers: { 'Authorization': token, },
+			url: url,
+			data: params,
+			contentType: false,
+			processData: false,
 			success: function (back) {
 				if (back.code === 100002) {
 					delCookie('loginName');
@@ -205,7 +229,7 @@ var getCookie = function (cname) {
 	for (var i = 0; i < ca.length; i++) {
 		var c = ca[i];
 		while (c.charAt(0) === ' ') c = c.substring(1);
-		if (c.indexOf(name) !== -1) return c.substring(name.length, c.length);
+		if (c.indexOf(name) !== -1) return unescape(c.substring(name.length, c.length));
 	}
 	return '';
 };

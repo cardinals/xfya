@@ -6,9 +6,9 @@
 			</el-input>
 		</div>
 		<div class="tip_con left">
-			<div class="demo-typo-box left" v-for="(item, key) in dataList" :key="key" :class="{'active': key === selectItem}" @click="nodeClick(item, key)">
+			<div class="demo-typo-box left" :title="item.name" v-for="(item, key) in dataList" :key="item.id" :class="{'active': item.id === select}" @click="nodeClick(item, key)">
 				<img :src="getSrc(item)" alt="">
-				<div class="name" :title="item.name">{{item.name}}</div>
+				<div class="name">{{item.name}}</div>
 			</div>
 		</div>
 	</div>
@@ -17,7 +17,7 @@
 <script>
 import pointStyle from '../../assets/js/pointStyle';
 export default {
-	props: ['nodeData', 'nodeName', 'isNode', 'noAdd'],
+	props: ['selectItem'],
 	data () {
 		return {
 			activeName: 0,
@@ -25,7 +25,7 @@ export default {
 			infoList: [],
 			nodeInfo: {},
 			keyword: '',
-			selectItem: null,
+			select: this.selectItem,
 		};
 	},
 	mounted () {
@@ -39,11 +39,11 @@ export default {
 		},
 		// 点击选项
 		nodeClick (data, index) {
-			if (this.selectItem !== index) {
-				this.selectItem = index;
+			if (this.select !== data.id) {
+				this.select = data.id;
 				this.nodeInfo = data;
 			} else {
-				this.selectItem = null;
+				this.select = null;
 				this.nodeInfo = {};
 			}
 			this.$emit('nodeInfo', this.nodeInfo);
@@ -58,13 +58,16 @@ export default {
 				this.dataList = pointStyle;
 				return;
 			};
-			this.selectItem = null;
+			this.select = null;
 			this.dataList = pointStyle.filter((item) => {
 				return item.name.indexOf(this.keyword) !== -1;
 			});
 		},
 	},
 	watch: {
+		selectItem (newValue, oldValue) {
+			this.select = this.selectItem;
+		},
 	},
 };
 </script>
@@ -92,6 +95,7 @@ export default {
 		padding-bottom: 36px;
 		box-sizing: border-box;
 		display: inline-block;
+		cursor: pointer;
 	}
 	div.active{
 		border:1px solid #67c23a;

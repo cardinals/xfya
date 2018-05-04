@@ -1,9 +1,6 @@
 <template>
 	<section class="main">
 		<div id="content"></div>
-		<div class="saveBtn">
-			<el-button type="success" size="small" round @click="saveMapSite">保存更改</el-button><span></span>
-		</div>
 	</section>
 </template>
 
@@ -18,15 +15,15 @@ export default {
 			},
 		};
 	},
-	props: ['nodeInfo'],
+	props: ['info'],
 	mounted () {
 		this.initMap();
 	},
 	methods: {
 		initMap () {
 			// 如果有位置信息
-			if (this.nodeInfo.mapSite) {
-				var nodeMapSite = JSON.parse(this.nodeInfo.mapSite);
+			if (this.info) {
+				var nodeMapSite = JSON.parse(this.info);
 				this.mapSite = {
 					lng: nodeMapSite[0],
 					lat: nodeMapSite[1],
@@ -55,25 +52,12 @@ export default {
 					lng: e.point.lng,
 					lat: e.point.lat,
 				};
-			});
-		},
-		saveMapSite () {
-			var nodeMapSite = [this.mapSite.lng, this.mapSite.lat];
-			var param = {
-				'id': this.nodeInfo.id,
-				'mapSite': JSON.stringify(nodeMapSite),
-			};
-			plan.remote.ajaxPost(`${BASE_URL}/mgt/upOrgInfo`, JSON.stringify(param), (back) => {
-				if (back.code === 200) {
-					this.$message.success(back.message);
-					this.nodeInfo.mapSite = JSON.stringify([this.mapSite.lng, this.mapSite.lat]);
-					this.$emit('mapSite', this.nodeInfo);
-				}
+				this.$emit('mapSite', [this.mapSite.lng, this.mapSite.lat]);
 			});
 		},
 	},
 	watch: {
-		'nodeInfo': 'initMap',
+		'info': 'initMap',
 	},
 };
 </script>
@@ -83,10 +67,5 @@ export default {
 		width:100%;
 		height:520px;
 		position: relative;
-	}
-	.saveBtn{
-		position: absolute;
-		right:30px;
-		top:-40px;
 	}
 </style>

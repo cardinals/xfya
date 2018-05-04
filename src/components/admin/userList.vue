@@ -20,6 +20,9 @@
 				<el-row>
 					<el-button type="success" size="small" @click="openDialog(1)"><i class="el-icon-circle-plus-outline"></i>&nbsp;添加</el-button>
 					<el-button type="danger" size="small" @click="remove"><i class="el-icon-delete"></i>&nbsp;删除</el-button>
+					<el-input placeholder="请输入内容" v-model="keyword" class="input-with-select right" @keyup.enter.native="search">
+						<el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+					</el-input>
 				</el-row>
 				<el-table
 				:data="tableData"
@@ -37,7 +40,8 @@
 					</el-table-column>
 					<el-table-column :resizable="false" label="操作" width="100" header-align="center" align="center">
 						<template slot-scope="scope">
-						<el-button @click="handleClick(scope.row)" type="text" size="small">编辑</el-button>
+							<el-button @click="handleClick(scope.row, 1)" type="text" size="small">查看</el-button>
+							<el-button @click="handleClick(scope.row, 2)" type="text" size="small">编辑</el-button>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -49,7 +53,7 @@
 			:title="title"
 			:visible.sync="dialogRights"
 			width="40%">
-			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+			<el-form :model="ruleForm" :disabled="!isAdd" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 				<el-form-item label="用户名：" prop="username">
 					<el-input v-model="ruleForm.username"></el-input>
 				</el-form-item>
@@ -92,7 +96,7 @@
 					<el-input v-model="ruleForm.remark"></el-input>
 				</el-form-item>
 			</el-form>
-			<span slot="footer" class="dialog-footer">
+			<span slot="footer" class="dialog-footer" v-if="isAdd">
 				<el-button @click="closeDialog('ruleForm')">取 消</el-button>
 				<el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
 			</span>
@@ -118,9 +122,11 @@ export default {
 				total: 0,
 				show: true,
 			},
+			keyword: '',
 			passwordPla: '大于等于6位',
 			dialogRights: false,
 			multipleSelection: [],
+			isAdd: true,
 			isEdit: false,
 			title: '添加用户',
 			tableData: [],
@@ -139,6 +145,18 @@ export default {
 					{
 						required: true,
 						message: '请输入密码',
+						trigger: 'blur',
+					},
+					{
+						min: 6,
+						max: 36,
+						message: '密码至少6位',
+					}
+				],
+				remark: [
+					{
+						pattern: /^[\d-]*$/,
+						message: '请输入正确的电话格式',
 						trigger: 'blur',
 					}
 				],
@@ -164,13 +182,13 @@ export default {
 			});
 		},
 		// 初始化用户列表
-		initUser () {
+		initUser (key) {
 			var param = {
 				'pageNum': this.pageInfo.pageNum, // 分页页码，必填
 				'pageSize': this.pageInfo.pageSize, // 每页条数
 				'organizationId': this.isNode, // 组织机构代码
 				'realname': '', // 真实名称，查询条件
-				'username': '', // 用户名
+				'username': key, // 用户名
 			};
 			plan.remote.ajaxPost(`${BASE_URL}/user/getUserInfoList`, JSON.stringify(param), (back) => {
 				if (back.code === 200) {
@@ -201,7 +219,7 @@ export default {
 			return '';
 		},
 		// 编辑用户
-		handleClick (row) {
+		handleClick (row, type) {
 			this.ruleForm = {
 				userId: row.id,
 				orgadmin: row.orgadmin === 'true' ? '是' : '不是',
@@ -213,7 +231,11 @@ export default {
 				remark: this.remark(row),
 				roleId: row.roleId,
 			};
-			this.openDialog(2);
+			if (type === 1) {
+				this.openDialog(3);
+			} else {
+				this.openDialog(2);
+			};
 		},
 		// 打开添加编辑弹框
 		openDialog (type) {
@@ -232,14 +254,20 @@ export default {
 				}
 			});
 			this.passwordPla = '大于等于6位';
-			if (type === 2) {
+			if (type === 3) {
+				this.isAdd = false;
+				this.title = '查看用户';
+				this.getPermList();
+			} else if (type === 2) {
 				this.rules.password[0].required = false;
+				this.isAdd = true;
 				this.isEdit = true;
 				this.title = '编辑用户';
 				this.passwordPla = '不填写则密码不修改';
 				this.getPermList();
 			} else {
 				this.rules.password[0].required = true;
+				this.isAdd = true;
 				this.isEdit = false;
 				this.title = '添加用户';
 				this.ruleForm = {
@@ -332,6 +360,10 @@ export default {
 			}).catch(() => {
 			});
 		},
+		// 搜索
+		search (e) {
+			this.initUser(this.keyword);
+		},
 		// 关闭弹框
 		closeDialog (formName) {
 			this.dialogRights = false;
@@ -374,9 +406,12 @@ export default {
 	}
 }
 .right_con{
-	width:49%;
+	width:64%;
 	padding:1%;
 	text-align: left;
+	.input-with-select{
+		width:230px;
+	}
 }
 .fix{
 	font-size:16px;

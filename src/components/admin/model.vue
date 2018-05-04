@@ -4,12 +4,12 @@
 			<el-collapse v-model="activeName" accordion>
 				<el-collapse-item v-for="(item, key) in dataList" :key="key" :title="item.title" :name="key">
 					<el-button size="small" type="success" plain v-for="(parts, num) in item.children" :key="num"
-					:class="{'active': (num+key)*10 === selectItem}" @click="infoClick(parts.children, (num+key)*10)">{{parts.title}}</el-button>
+					:class="{'active': String(key) + String(num) === selectItem}" @click="infoClick(parts.children, key, num)">{{parts.title}}</el-button>
 				</el-collapse-item>
 			</el-collapse>
 		</div>
 		<div class="model_right left">
-			<div class="demo-typo-box left" v-for="(item, key) in filterInfoList" :key="key" :class="{'active': key === selectItem2}" @click="nodeClick(item, key)">
+			<div class="demo-typo-box left" v-for="(item, key) in filterInfoList" :key="key" :class="{'isactive': key === selectItem2}" @click="nodeClick(item, key)">
 				<img :src="getSrc(item)" alt="">
 			<div class="name" :title="item.title">{{item.title}}</div></div>
 		</div>
@@ -18,15 +18,16 @@
 
 <script>
 export default {
-	props: ['nodeData', 'nodeName', 'isNode', 'noAdd'],
+	props: ['select'],
 	data () {
 		return {
-			activeName: 0,
+			activeName: this.select ? this.select[0] : 0,
 			dataList: [],
 			infoList: [],
 			nodeInfo: {},
+			selectIndex: [],
 			selectItem: null,
-			selectItem2: null,
+			selectItem2: this.select ? this.select[2] : null,
 		};
 	},
 	mounted () {
@@ -44,18 +45,28 @@ export default {
 		initList () {
 			plan.remote.libraryList(null, (data) => {
 				this.dataList = data;
-				this.infoClick(this.dataList[0].children[0].children, 0);
+				var select = this.select;
+				if (select && select.length > 0) {
+					this.infoClick(this.dataList[select[0]].children[select[1]].children, select[0], select[1]);
+				} else {
+					this.infoClick(this.dataList[0].children[0].children, 0, 0);
+				}
 			});
 		},
-		infoClick (data, index) {
+		infoClick (data, key, num) {
 			this.infoList = data;
-			this.selectItem = index;
+			this.selectItem = String(key) + String(num);
+			this.$set(this.selectIndex, 0, key);
+			this.$set(this.selectIndex, 1, num);
 		},
 		nodeClick (data, index) {
 			if (this.selectItem2 !== index) {
 				this.selectItem2 = index;
 				data.src = `${plan.remote.tableName}/resource/model/${data.id}/${data.version}/screenshot_128.jpg`;
 				this.nodeInfo = data;
+				// 保存索引
+				this.$set(this.selectIndex, 2, this.selectItem2);
+				this.nodeInfo.select = JSON.parse(JSON.stringify(this.selectIndex));
 			} else {
 				this.selectItem2 = null;
 				this.nodeInfo = {};
@@ -67,6 +78,13 @@ export default {
 		},
 	},
 	watch: {
+		select (newValue, oldValue) {
+			if (this.select) {
+				var s = this.select;
+				this.infoClick(this.dataList[s[0]].children[s[1]].children, s[0], s[1]);
+				this.selectItem2 = s[2];
+			}
+		},
 	},
 };
 </script>
@@ -100,7 +118,7 @@ export default {
 		box-sizing: border-box;
 		display: inline-block;
 	}
-	div.active{
+	div.isactive{
 		border:1px solid #67c23a;
 		&:after {
 			font-family:'FontAwesome';

@@ -43,7 +43,7 @@
 			:title="title"
 			:visible.sync="dialogRights"
 			width="40%">
-			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+			<el-form :model="ruleForm" :disabled="!isAdd" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 				<el-form-item label="角色名称：" prop="roleName">
 					<el-input v-model="ruleForm.roleName"></el-input>
 				</el-form-item>

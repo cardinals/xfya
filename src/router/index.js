@@ -3,8 +3,10 @@ import Router from 'vue-router';
 import Login from '@/components/login';
 import Index from '@/components/index';
 // common
-import Map from '@/components/common/map';
 import BaseMap from '@/components/common/baseMap';
+// index
+import Map from '@/components/index/map';
+import AddPlan from '@/components/index/addPlan';
 // admin
 import Admin from '@/components/admin/admin';
 import Org from '@/components/admin/org';
@@ -32,13 +34,18 @@ export default new Router({
 			children: [
 				{
 					path: '',
-					name: '地图',
-					redirect: 'map',
+					name: '首页',
+					redirect: 'plan',
 				},
 				{
-					path: '/map',
-					name: 'map',
+					path: '/plan',
+					name: 'plan',
 					component: Map,
+				},
+				{
+					path: '/addPlan',
+					name: '新建预案',
+					component: AddPlan,
 				}
 			],
 		},

@@ -18,51 +18,50 @@
 		<div class="right_con left" v-show="rightShow">
 			<div slot="header" class="fix fix2">
 				<span class="left">基本信息</span>
-				<span class="right" @click="handleClick">编辑</span>
 			</div>
 			<div class="point_info">
 				<p>
-					<label for="">名字： </label><span>{{nodeInfo.name}}</span>
+					<label for="">名字： </label><span>{{pointInfo.name}}</span>
 				</p>
 				<p v-show="isModel">
-					<label for="">模型： </label><span><img :src="nodeInfo.model.src" alt=""></span>
+					<label for="">模型： </label><span><img :src="pointInfo.model.src" alt=""></span>
 				</p>
 				<p v-show="isTip">
-					<label for="">气泡： </label><span><img :src="nodeInfo.tip.src" alt=""></span>
+					<label for="">气泡： </label><span><img :src="pointInfo.tip.src" alt=""></span>
 				</p>
 				<p>
-					<label for="">拖拽图片： </label><span><img :src="nodeInfo.photo" alt=""></span>
+					<label for="">拖拽图片： </label><span><img :src="pointInfo.photo" alt=""></span>
 				</p>
 				<p v-show="isColor">
-					<label for="">颜色： </label><span :style="styleColor" :title="nodeInfo.color"></span>
+					<label for="">颜色： </label><span :style="styleColor" :title="pointInfo.color"></span>
 				</p>
 				<p v-show="isWidth">
-					<label for="">宽度： </label><span>{{nodeInfo.width}}</span>
+					<label for="">宽度： </label><span>{{pointInfo.width}}</span>
 				</p>
 			</div>
 		</div>
 		<el-dialog
 			title="编辑信息"
-			:visible.sync="dialogVisible"
+			:visible.sync="addDialog"
 			width="650px">
-			<el-form :model="nodeInfo" ref="nodeInfo" label-width="100px" class="demo-ruleForm">
+			<el-form :model="addInfo" :rules="rules" ref="addInfo" label-width="100px" class="demo-ruleForm">
 				<el-form-item label="类型：" prop="type">
-					<el-radio-group v-model="nodeInfo.type" ref="nodeInfotype">
+					<el-radio-group v-model="addInfo.type" ref="addInfotype">
 						<el-radio label="点"></el-radio>
 						<el-radio label="线"></el-radio>
 						<el-radio label="面"></el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="名字：" prop="name">
-					<el-input v-bind:value="nodeInfo.name" ref="nodeInfoname"></el-input>
+					<el-input v-model="addInfo.name" ref="addInfoname"></el-input>
 				</el-form-item>
 				<el-form-item label="模型：" prop="model" v-show="isModel">
-					<img :src="nodeInfo.model.src" alt="" style="height:40px; float:left;">
-					<el-button size="small" type="info" plain @click="modeldialog = true">点击选择</el-button>
+					<el-button size="small" class="left" type="primary" plain @click="modeldialog = true">点击选择</el-button>
+					<img :src="addInfo.model.src" alt="" style="height:40px; float:left;">
 				</el-form-item>
 				<el-form-item label="气泡：" prop="tip" v-show="isTip">
-					<img :src="nodeInfo.tip.src" alt="" style="height:40px; float:left;">
-					<el-button size="small" type="info" plain @click="tipdialog = true">点击选择</el-button>
+					<el-button size="small" class="left" type="primary" plain @click="tipdialog = true">点击选择</el-button>
+					<img :src="addInfo.tip.src" alt="" style="height:40px; float:left;">
 				</el-form-item>
 				<el-form-item label="图片：" prop="photo">
 					<el-upload
@@ -72,30 +71,31 @@
 					accept="image/*"
 					:auto-upload="false"
 					:limit="1"
-					:on-success="uploadSuccess"
+					:file-list="fileList"
+					:before-upload="beforeAvatarUpload"
 					:on-preview="handlePictureCardPreview"
 					:on-remove="handleRemove">
-						<el-button size="small" type="primary">点击上传</el-button>
+						<el-button size="small" plain type="primary">点击上传</el-button>
 					</el-upload>
-					<el-dialog :visible.sync="uploadVisible">
-						<img width="100%" :src="dialogImageUrl" ref='nodeInfophoto' alt="">
+					<el-dialog :visible.sync="uploadVisible" :modal="false">
+						<img width="100%" :src="dialogImageUrl" ref='addInfophoto' alt="">
 					</el-dialog>
 				</el-form-item>
-				<el-form-item v-show="isColor" label="颜色：" prop="color">
-					<el-color-picker v-model="nodeInfo.color" ref="nodeInfocolor" show-alpha></el-color-picker>
+				<el-form-item v-show="isColor2" label="颜色：" prop="color">
+					<el-color-picker v-model="addInfo.color" ref="addInfocolor" show-alpha></el-color-picker>
 				</el-form-item>
-				<el-form-item v-show="isWidth" label="宽度：" prop="width">
-					<el-input v-bind:value="nodeInfo.width" ref="nodeInfowidth"></el-input>
+				<el-form-item v-show="isWidth2" label="宽度：" prop="width">
+					<el-input v-model="addInfo.width" ref="addInfowidth"></el-input>
 				</el-form-item>
 			</el-form>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="closeDialog('nodeInfo')">取 消</el-button>
-				<el-button type="primary" @click="submitForm('nodeInfo', nodeInfoData)">确 定</el-button>
+				<el-button @click="closeDialog('addInfo')">取 消</el-button>
+				<el-button type="primary" @click="submitAdd('addInfo', nodeInfoData)">确 定</el-button>
 			</span>
 		</el-dialog>
 		<el-dialog
 			title="添加类型"
-			:visible.sync="dialogVisible2"
+			:visible.sync="dialogVisible"
 			width="650px">
 			<el-form :model="typeNode" :rules="rules2" ref="typeNode" label-width="100px" class="demo-ruleForm">
 				<el-form-item label="名字：" prop="name">
@@ -112,7 +112,7 @@
 			:visible.sync="modeldialog"
 			:before-close="closeModel"
 			width="700px">
-			<Model @nodeInfo="getNodeInfo" />
+			<Model @nodeInfo="getNodeInfo" :select="addInfo.model.select" />
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="closeModel(null)">取 消</el-button>
 				<el-button type="primary" @click="saveModel">确 定</el-button>
@@ -123,7 +123,7 @@
 			:visible.sync="tipdialog"
 			:before-close="closeTip"
 			width="700px">
-			<Tip @nodeInfo="getTipInfo" />
+			<Tip @nodeInfo="getTipInfo" :selectItem="addInfo.tip.id" />
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="closeTip(null)">取 消</el-button>
 				<el-button type="primary" @click="saveTip">确 定</el-button>
@@ -139,37 +139,48 @@ export default {
 	components: { Model, Tip, },
 	data () {
 		return {
-			action: `${BASE_URL}/option/uploadImgNew`,
+			action: `${BASE_URL}/option/uploadImg`,
 			styleColor: '',
+			addDialog: false,
 			dialogVisible: false,
-			dialogVisible2: false,
 			modeldialog: false,
 			tipdialog: false,
+			addData: {},
 			// 树形菜单
-			nodeInfo: {
+			pointInfo: {
 				id: '',
 				model: { src: null, },
 				tip: { src: null, },
+			},
+			addInfo: {
+				id: '',
+				model: { src: null, },
+				tip: { src: null, },
+				type: '点',
 			},
 			defaultProps: {
 				label: 'name',
 			},
 			isColor: false,
 			isWidth: false,
+			isColor2: false,
+			isWidth2: false,
 			isModel: false,
 			isTip: false,
-			rightShow: true,
+			rightShow: false,
 			// 模型信息和气泡信息
+			tipAdd: {},
 			tipInfo: {},
+			modelAdd: {},
 			modelInfo: {},
 			// 上传图片
+			fileList: [],
 			dialogImageUrl: '',
 			uploadVisible: false,
 			// 添加类型
 			typeNode: {
 				id: '',
 			},
-			isAdd: true,
 			pointData: [{
 				id: 'map',
 				name: '地图',
@@ -181,6 +192,15 @@ export default {
 				istype: 'unity',
 				children: [],
 			}],
+			rules: {
+				name: [
+					{
+						required: true,
+						message: '请输入名称',
+						trigger: 'blur',
+					}
+				],
+			},
 			rules2: {
 				name: [
 					{
@@ -251,46 +271,66 @@ export default {
 			});
 		},
 		// 左边列表点击
-		handleNodeClick (data) {
+		handleNodeClick (data, node) {
 			if (!data.children) {
 				this.rightShow = true;
-				for (var i in data) {
-					this.nodeInfo[i] = data[i];
-				};
-				this.nodeInfo.model = data.model ? JSON.parse(data.model) : '';
-				this.nodeInfo.tip = data.model ? JSON.parse(data.tip) : '';
-				this.styleColor = `width:40px;height:40px;background:${this.nodeInfo.color}`;
+				this.updateInfo(data);
 				if (data.type === 'map' || data.typeId === 'map') {
 					this.isModel = false;
 					this.isTip = false;
 				} else {
 					this.isModel = true;
 					this.isTip = true;
-				}
+				};
+				this.nodeInfoData = node.parent.data;
 			} else {
 				this.rightShow = false;
+				this.nodeInfoData = data;
 			};
-			this.nodeInfoData = data;
-			this.isShowColor();
+			this.isShowColor('info');
 		},
-		// 颜色的显示隐藏
-		isShowColor () {
-			if (this.nodeInfo.type === '面') {
-				this.isColor = true;
-				this.isWidth = true;
-			} else {
-				this.isColor = false;
-				if (this.nodeInfo.type === '线') {
+		// 更新详情
+		updateInfo (data) {
+			for (var i in data) {
+				this.pointInfo[i] = data[i];
+			};
+			this.pointInfo.photo = `${BASE_URL}/img/${data.photo}`;
+			this.pointInfo.model = data.model ? data.model : '';
+			this.pointInfo.tip = data.model ? data.tip : '';
+			this.styleColor = `width:40px;height:40px;background:${this.pointInfo.color}`;
+		},
+		// 弹框颜色的显示隐藏
+		isShowColor (type) {
+			if (type === 'info') {
+				if (this.pointInfo.type === '面') {
+					this.isColor = true;
 					this.isWidth = true;
 				} else {
-					this.isWidth = false;
+					this.isColor = false;
+					if (this.pointInfo.type === '线') {
+						this.isWidth = true;
+					} else {
+						this.isWidth = false;
+					}
+				}
+			} else {
+				if (this.addInfo.type === '面') {
+					this.isColor2 = true;
+					this.isWidth2 = true;
+				} else {
+					this.isColor2 = false;
+					if (this.addInfo.type === '线') {
+						this.isWidth2 = true;
+					} else {
+						this.isWidth2 = false;
+					}
 				}
 			}
 		},
 		// 选择模型的回调
 		getNodeInfo (node) {
 			if (node.title) {
-				this.modelInfo = JSON.stringify(node);
+				this.modelInfo = node;
 			} else {
 				this.modelInfo = '';
 			}
@@ -298,16 +338,17 @@ export default {
 		// 取消选择
 		closeModel (done) {
 			this.modeldialog = false;
+			this.modelInfo = '';
 		},
 		// 保存模型
 		saveModel () {
-			this.nodeInfo.model = this.modelInfo;
 			this.modeldialog = false;
+			this.addInfo.model = this.modelInfo;
 		},
 		// 选择气泡的回调
 		getTipInfo (node) {
 			if (node.name) {
-				this.tipInfo = JSON.stringify(node);
+				this.tipInfo = node;
 			} else {
 				this.tipInfo = '';
 			}
@@ -315,29 +356,24 @@ export default {
 		// 取消选择
 		closeTip (done) {
 			this.tipdialog = false;
+			this.tipInfo = '';
 		},
 		// 保存气泡
 		saveTip () {
-			this.nodeInfo.tip = this.tipInfo;
+			this.addInfo.tip = this.tipInfo;
 			this.tipdialog = false;
 		},
-		// 编辑
-		handleClick () {
-			this.dialogVisible = true;
-			this.append(this.nodeInfoData, 1);
-		},
-		// 添加信息点
-		append (data, node) {
+		// 添加信息点弹框
+		append (data, node, isEdit) {
 			if (data.istype) {
-				this.dialogVisible2 = true;
+				this.dialogVisible = true;
 				this.resetForm('typeNode');
 				this.typeNode = {
 					name: '',
 				};
 				this.typeNodeData = data;
 			} else {
-				this.dialogVisible = true;
-				this.nodeInfoData = data;
+				this.addDialog = true;
 				if (data.type === 'map' || data.typeId === 'map') {
 					this.isModel = false;
 					this.isTip = false;
@@ -345,13 +381,19 @@ export default {
 					this.isModel = true;
 					this.isTip = true;
 				}
-				if (node === 1) {
-					this.isAdd = false;
-					this.nodeInfo = this.nodeInfoData;
+				this.resetForm('addInfo');
+				// 编辑信息
+				if (isEdit) {
+					this.isEdit = true;
+					for (var i in data) {
+						this.addInfo[i] = data[i];
+					};
+					this.addInfo.photo = `${BASE_URL}/${data.photo}`;
+					this.$set(this.fileList, 0, { 'name': data.photo, 'url': `${BASE_URL}/img/${data.photo}`, });
 				} else {
-					this.resetForm('nodeInfo');
-					this.isAdd = true;
-					this.nodeInfo = {
+					// 添加信息
+					this.isEdit = false;
+					this.addInfo = {
 						type: '点',
 						id: null,
 						name: '',
@@ -360,10 +402,11 @@ export default {
 						photo: '',
 						color: '',
 					};
+					this.fileList = [];
 				}
 			};
 		},
-		// 删除部门
+		// 删除信息点
 		remove (node, data) {
 			this.$confirm('此操作将删除此信息，是否继续？', '提示', {
 				confirmButtonText: '确定',
@@ -395,7 +438,20 @@ export default {
 			}).catch(() => {
 			});
 		},
-		// 提交表单
+		// 添加信息点
+		submitAdd (formName, data) {
+			this.$refs[formName].validate((valid) => {
+				if (valid) {
+					this.addData = data;
+					if (this.fileList.length > 0) {
+						this.ajaxSubmit(this.fileList[0].name);
+					} else {
+						this.submitUpload();
+					}
+				};
+			});
+		},
+		// 添加类型提交
 		submitForm (formName, data) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
@@ -405,81 +461,83 @@ export default {
 							return;
 						};
 					};
-					if (formName === 'typeNode') {
-						const newChild = { id: this.$newGuid(), thisId: data.id, name: this.typeNode.name, type: data.istype, children: [], };
-						if (!data.children) {
-							this.$set(data, 'children', []);
-						}
-						data.children.push(newChild);
-						var param = {
-							'id': data.id,
-							'optionKey': data.istype,
-							'optionValue': data.istype === 'map' ? JSON.stringify(this.pointData[0]) : JSON.stringify(this.pointData[1]),
-						};
-						plan.remote.ajaxPost(`${BASE_URL}/option/upOptionById/${data.id}`, JSON.stringify(param), (back) => {
-							if (back.code === 200) {
-								this.$message.success('添加成功');
-								this.closeDialog('typeNode');
-							}
-						});
-					} else {
-						const newChild = {
-							type: this.nodeInfo.type,
-							id: this.$newGuid(),
-							thisId: data.thisId,
-							typeId: data.typeId ? data.typeId : data.type,
-							name: this.$refs.nodeInfoname.currentValue,
-							model: this.$refs.nodeInfomodel.currentValue,
-							tip: this.$refs.nodeInfotip.currentValue,
-							photo: '',
-							color: this.nodeInfo.color,
-							width: this.$refs.nodeInfowidth.currentValue,
-						};
-						// this.submitUpload();
-						if (this.isAdd) {
-							if (!data.children) {
-								this.$set(data, 'children', []);
-							}
-							data.children.push(newChild);
-							var params = {
-								'id': data.thisId,
-								'optionKey': data.type,
-								'optionValue': data.type === 'map' ? JSON.stringify(this.pointData[0]) : JSON.stringify(this.pointData[1]),
-							};
-							plan.remote.ajaxPost(`${BASE_URL}/option/upOptionById/${data.thisId}`, JSON.stringify(params), (back) => {
-								if (back.code === 200) {
-									this.$message.success('添加成功');
-									this.closeDialog('typeNode');
-								}
-							});
-						} else {
-							for (var i in newChild) {
-								data[i] = newChild[i];
-							};
-							data.typeId = newChild.typeId;
-							var paramss = {
-								'id': data.thisId,
-								'optionKey': data.typeId,
-								'optionValue': data.typeId === 'map' ? JSON.stringify(this.pointData[0]) : JSON.stringify(this.pointData[1]),
-							};
-							plan.remote.ajaxPost(`${BASE_URL}/option/upOptionById/${data.thisId}`, JSON.stringify(paramss), (back) => {
-								if (back.code === 200) {
-									this.$message.success('编辑成功');
-									this.closeDialog('nodeInfo');
-								}
-							});
-						}
+					const newChild = { id: this.$newGuid(), thisId: data.id, name: this.typeNode.name, type: data.istype, children: [], };
+					if (!data.children) {
+						this.$set(data, 'children', []);
+					}
+					data.children.push(newChild);
+					var param = {
+						'id': data.id,
+						'optionKey': data.istype,
+						'optionValue': data.istype === 'map' ? JSON.stringify(this.pointData[0]) : JSON.stringify(this.pointData[1]),
 					};
+					plan.remote.ajaxPost(`${BASE_URL}/option/upOptionById/${data.id}`, JSON.stringify(param), (back) => {
+						if (back.code === 200) {
+							this.$message.success('添加成功');
+							this.closeDialog('typeNode');
+						}
+					});
 				} else {
 					return false;
 				}
 			});
 		},
+		// 接口更新
+		ajaxSubmit (photo) {
+			var data = this.addData;
+			const newChild = {
+				type: this.addInfo.type,
+				id: this.isEdit ? this.addInfo.id : this.$newGuid(),
+				thisId: data.thisId,
+				typeId: data.typeId ? data.typeId : data.type,
+				name: this.addInfo.name,
+				model: this.addInfo.model,
+				tip: this.addInfo.tip,
+				photo: photo,
+				color: this.addInfo.color,
+				width: this.addInfo.width,
+			};
+			if (!data.children) {
+				this.$set(data, 'children', []);
+			};
+			if (this.isEdit) {
+				const index = data.children.findIndex(d => d.id === newChild.id);
+				data.children.splice(index, 1, newChild);
+			} else {
+				data.children.push(newChild);
+			};
+			var params = {
+				'id': data.thisId,
+				'optionKey': data.type,
+				'optionValue': data.type === 'map' ? JSON.stringify(this.pointData[0]) : JSON.stringify(this.pointData[1]),
+			};
+			plan.remote.ajaxPost(`${BASE_URL}/option/upOptionById/${data.thisId}`, JSON.stringify(params), (back) => {
+				if (back.code === 200) {
+					this.updateInfo(newChild);
+					this.closeDialog('addInfo');
+					this.$message.success('操作成功');
+				} else {
+					const index = data.children.findIndex(d => d.id === newChild.id);
+					data.children.splice(index, 1);
+				}
+			});
+		},
+		// 上传前校验
+		beforeAvatarUpload (file) {
+			var fd = new FormData();
+			fd.append('file', file);
+			plan.remote.ajaxUpload(`${BASE_URL}/option/uploadImg`, fd, (back) => {
+				if (back.code === 200) {
+					this.ajaxSubmit(back.result);
+				}
+			});
+			return false;
+		},
 		// 移除上传文件
 		handleRemove (file, fileList) {
-			console.log(file, fileList);
+			this.fileList = fileList;
 		},
-		// 上传
+		// 上传视图
 		handlePictureCardPreview (file) {
 			this.dialogImageUrl = file.url;
 			this.uploadVisible = true;
@@ -488,9 +546,6 @@ export default {
 		submitUpload () {
 			this.$refs.upload.submit();
 		},
-		uploadSuccess (response, file, fileList) {
-			console.log(response);
-		},
 		// 显示添加编辑按钮
 		renderContent (h, { node, data, store, }) {
 			if (!data.children) {
@@ -498,6 +553,7 @@ export default {
 					<span class='custom-tree-node'>
 						<span>{node.label}</span>
 						<span>
+							<el-button size='mini' type='text' on-click={ () => this.append(data, node, 1) }><i class="el-icon-edit-outline" title="编辑"></i></el-button>
 							<el-button size='mini' type='text' on-click={ () => this.remove(node, data) }><i class="el-icon-circle-close-outline" title="删除"></i></el-button>
 						</span>
 					</span>
@@ -525,23 +581,23 @@ export default {
 		},
 		// 关闭弹框
 		closeDialog (formName) {
+			this.addDialog = false;
 			this.dialogVisible = false;
-			this.dialogVisible2 = false;
-			if (formName === 'nodeInfo') {
+			if (formName === 'addInfo') {
 				this.$refs.upload.clearFiles();
 			};
 		},
 		// 重置表单
 		resetForm (formName) {
 			if (this.$refs[formName] !== undefined) {
-				if (formName === 'nodeInfo') {
+				if (formName === 'addInfo') {
 					this.$refs.upload.clearFiles();
 				};
 			};
 		},
 	},
 	watch: {
-		'nodeInfo.type': 'isShowColor',
+		'addInfo.type': 'isShowColor',
 	},
 };
 </script>
@@ -584,7 +640,7 @@ export default {
 				float:left;
 				line-height: 40px;
 				img{
-					width:40px;
+					height:50px;
 				}
 			}
 		}

@@ -4,7 +4,7 @@
 			<div class="searchbox clearfix">
 				<div id="searchbox-container">
 					<div id="sole-searchbox-content" class="searchbox-content is-complete">
-						<input id="sole-input" class="searchbox-content-common" type="text" name="word" autocomplete="off" maxlength="256" placeholder="搜预案" value="">
+						<input id="sole-input" class="searchbox-content-common" type="text" name="word" autocomplete="off" maxlength="256" placeholder="搜预案"  v-model="keyword">
 						<div class="input-clear" title="清空" style="display: none;"></div>
 						<div class="searchbox-content-button right-button loading-button cancel-button" title="清空" data-tooltip="1"></div>
 					</div>
@@ -65,14 +65,6 @@
 														<a class="selectItem item" href="javascript:;">类型一</a></li>
 													<li>
 														<a class="selectItem item" href="javascript:;">类型二</a></li>
-													<li>
-														<a class="selectItem item" href="javascript:;">类型二</a></li>
-													<li>
-														<a class="selectItem item" href="javascript:;">类型二</a></li>
-													<li>
-														<a class="selectItem item" href="javascript:;">类型二</a></li>
-													<li>
-														<a class="selectItem item" href="javascript:;">类型二</a></li>
 												</ul>
 											</dd>
 										</dl>
@@ -94,84 +86,45 @@
 							</div>
 						</div>
 						<ul class="poilist">
-							<li data-index="1" data-searchindex="0" class="search-item hotel-item">
+							<li v-for="(item, key) in planList" :key="key" :data-index="key" class="search-item hotel-item">
 								<div class="cf mb_5">
 									<div class="col-l">
-										<a href="javascript:void(0)" class="no no-1"></a>
+										<a href="javascript:void(0)" :class="classKey(key)"></a>
 									</div>
 									<div class="col-r">
-										<div class="mt_5 h_20">
-											<a href="javascript:void(0)" class="camera-icon street-pano ml_5" data-index="1">&nbsp;</a></div>
 										<div class="img-wrap">
 											<a href="javascript:void(0)" data-index="1">
-												<img src="/static/img/bg.jpg" style="width:71px;height:58px;">
+												<img src="/static/img/bg.jpg" style="width:80px;height:62px;">
 											</a>
 										</div>
 									</div>
 									<div class="ml_30 mr_90">
 										<div class="row">
 											<span>
-												<a href="javascript:void(0)" class="n-blue" data-index="1">青岛中心假日酒店</a>
+												<a href="javascript:void(0)" class="n-blue" :data-index="key">{{item.name}}</a>
 											</span>
 										</div>
 										<div class="row">
-											<span>五级预案<i class="seperate">|</i>人员密集型</span>
+											<span>{{item.planLevelId}}预案<i class="seperate">|</i>{{item.planTypeId}}</span>
 										</div>
 										<div class="row addr">
-											<span class="n-grey" title="青岛市黄岛区中心街666号">青岛市黄岛区中心街666号</span>
+											<span class="n-grey" :title="item.descript">{{item.descript}}</span>
 										</div>
 										<div class="row">
-											<a class="detail ml_5" data-index="1">查看详情</a>
-										</div>
-									</div>
-								</div>
-							</li>
-							<li data-index="2" data-searchindex="0" class="search-item hotel-item">
-								<div class="cf mb_5">
-									<div class="col-l">
-										<a href="javascript:void(0)" class="no no-2"></a>
-									</div>
-									<div class="col-r">
-										<div class="mt_5 h_20">
-											<a href="javascript:void(0)" class="camera-icon street-pano ml_5" data-index="1">&nbsp;</a></div>
-										<div class="img-wrap">
-											<a href="javascript:void(0)" data-index="2">
-												<img src="/static/img/bg.jpg" style="width:71px;height:58px;">
-											</a>
-										</div>
-									</div>
-									<div class="ml_30 mr_90">
-										<div class="row">
-											<span>
-												<a href="javascript:void(0)" class="n-blue" data-index="2">青岛中心假日酒店</a>
-											</span>
-										</div>
-										<div class="row">
-											<span>五级预案<i class="seperate">|</i>人员密集型</span>
-										</div>
-										<div class="row addr">
-											<span class="n-grey" title="青岛市黄岛区中心街666号">青岛市黄岛区中心街666号</span>
-										</div>
-										<div class="row">
-											<a class="detail ml_5" data-index="2">查看详情</a>
+											<a class="detail ml_5" :data-index="key">查看详情</a>
 										</div>
 									</div>
 								</div>
 							</li>
 						</ul>
 						<div id="poi_page" class="poi-page">
-							<p class="page">
-								<span class="curPage">1</span>
-								<span>
-									<a href="javascript:void(0)" tid="secPageNum" onclick="Instance('TANGRAM_350').toPage(2);return false;">2</a></span>
-								<span>
-									<a href="javascript:void(0)" onclick="Instance('TANGRAM_350').toPage(3);return false;">3</a></span>
-								<span>
-									<a href="javascript:void(0)" onclick="Instance('TANGRAM_350').toPage(4);return false;">4</a></span>
-								<span>
-									<a href="javascript:void(0)" tid="toNextPage" onclick="Instance('TANGRAM_350').toPage(2);return false;">下一页&gt;</a>
-								</span>
-							</p>
+							<el-pagination
+								@size-change="handleSizeChange"
+								@current-change="handleCurrentChange"
+								:current-page="pageNum"
+								layout="total, sizes, prev, pager, next, jumper"
+								:total="total">
+							</el-pagination>
 						</div>
 						<div class="poi-no-result"></div>
 					</div>
@@ -184,11 +137,22 @@
 
 <script>
 import BMap from 'BMap';
+import Page from '../common/pagination.vue';
 export default {
+	components: { Page, },
 	data () {
 		return {
 			page_type: '',
+			keyword: '',
 			selectItem: 0,
+			planList: [],
+			// 分页数据
+			pageInfo: {
+				pageNum: 1,
+				pageSize: 10,
+				total: 0,
+				show: true,
+			},
 			city_list: [
 				{
 					'id': 0,
@@ -221,15 +185,40 @@ export default {
 	},
 	mounted () {
 		this.initMap();
+		this.initPlanList();
 		this.bd_list_active = this.bd_list[0].name;
 	},
 	methods: {
+		// 初始化预案
+		initPlanList (keyword) {
+			var param = {
+				'name': keyword, // 预案名称  选填
+				'zhidui': '', // 支队名称  选填
+				'pageNum': '1', // 当前页 必填
+				'pageSize': '10', // 每页显示数量  必填
+			};
+			plan.remote.ajaxPost(`${BASE_URL}/plan/getPlanList`, JSON.stringify(param), (back) => {
+				if (back.code === 200) {
+					this.planList = back.result.list;
+				}
+			});
+		},
+		// 预案索引值
+		classKey (key) {
+			return `no no-${key + 1}`;
+		},
+		// 分页事件
+		updatePageNum (val) {
+			this.pageInfo.pageNum = val;
+		},
+		// 选择城市
 		select_city (item, index) {
 			if (index || index === 0) {
 				this.selectItem = index;
 			};
 			this.bd_list_active = this.bd_list[index].name;
 		},
+		// 初始化地图
 		initMap () {
 			let map = new BMap.Map('content');
 			let point = new BMap.Point(116.404, 39.915);
